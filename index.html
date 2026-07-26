@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🎂 A Special Mission Awaits...</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Nunito:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+    <!-- Typed.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.1.0/typed.umd.js"></script>
+
+    <!-- canvas-confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+
+    <!-- Starfield Canvas -->
+    <canvas id="starfield"></canvas>
+
+    <!-- Floating emojis (decorative) -->
+    <div class="floaters" id="floaters"></div>
+
+    <!-- ===== SCREEN 1: WELCOME ===== -->
+    <section id="welcome-screen" class="screen active">
+      <div class="card" id="welcome-card">
+
+        <!-- Top sparkle line -->
+        <div class="sparkle-bar">✨ &nbsp; ✨ &nbsp; ✨</div>
+
+        <!-- Title -->
+        <h1 class="mission-title" id="mission-title">Mission Birthday</h1>
+
+        <!-- Subtitle typed text -->
+        <p class="hello-line">
+          Hello, <span class="name-highlight">Sneha</span>...
+        </p>
+        <p class="typed-container">
+          <span id="typed-text"></span>
+        </p>
+
+        <!-- CTA Button -->
+        <button class="cta-btn" id="start-btn" onclick="goToVerification()">
+          🚀 Start Mission
+        </button>
+
+        <!-- Small credit -->
+        <p class="credit-text">With love (and chaos) — Prasad 💫</p>
+      </div>
+    </section>
+
+    <!-- ===== SCREEN 2: IDENTITY VERIFICATION ===== -->
+    <section id="verify-screen" class="screen">
+      <div class="card" id="verify-card">
+
+        <div class="lock-icon">🔒</div>
+        <h2 class="verify-title">Identity Verification</h2>
+        <p class="verify-subtitle">Are you really <span class="name-highlight">Sneha</span>?</p>
+        <p class="verify-hint">(Think very carefully before answering 👀)</p>
+
+        <div class="verify-buttons">
+          <button class="verify-btn yes-btn" onclick="handleVerify('yes')">✅ YES, it's me!</button>
+          <button class="verify-btn no-btn" onclick="handleVerify('no')">❌ No...</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SCREEN 3: ACCESS DENIED ===== -->
+    <section id="denied-screen" class="screen">
+      <div class="card" id="denied-card">
+        <div class="denied-icon">🚫</div>
+        <h2 class="denied-title">Access Denied</h2>
+        <p class="denied-msg">Only Sneha can continue.</p>
+        <p class="denied-sub">Sorry bestie, wrong person! 😂</p>
+        <button class="cta-btn small" onclick="goBack()">← Go Back</button>
+      </div>
+    </section>
+
+    <!-- ===== SCREEN 4: SCANNING ===== -->
+    <section id="scan-screen" class="screen">
+      <div class="card" id="scan-card">
+
+        <div class="scan-emoji" id="scan-emoji">🤳</div>
+        <h2 class="scan-title" id="scan-title">Scanning Face...</h2>
+
+        <!-- Progress Bar -->
+        <div class="progress-wrap">
+          <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        <p class="progress-label" id="progress-label">0%</p>
+
+        <!-- Scan lines (fake dramatic effect) -->
+        <div class="scan-lines" id="scan-lines"></div>
+
+        <!-- Result (hidden initially) -->
+        <div class="scan-result" id="scan-result">
+          <div class="result-icon">✅</div>
+          <h2 class="result-title">Identity Confirmed!</h2>
+          <p class="result-subtitle">Welcome back, <span class="name-highlight">Birthday Queen 👑</span></p>
+          <button class="cta-btn" id="continue-btn" onclick="startAdventure()">
+            🎉 Let's Go!
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SCREEN 5: QUIZ INTRO ===== -->
+    <section id="quiz-intro-screen" class="screen">
+      <div class="card" id="quiz-intro-card">
+        <div class="quiz-intro-icon">🧠</div>
+        <h2 class="quiz-intro-title">Birthday Quiz</h2>
+        <p class="quiz-intro-sub">
+          Let's see how well Prasad knows his favourite person... 👀
+        </p>
+        <ul class="quiz-rules">
+          <li>🎯 6 questions about you & Prasad</li>
+          <li>💅 Every answer is personal</li>
+          <li>😂 Some questions won't let you move until you get it right 👀</li>
+          <li>👑 Score high = big surprise at the end</li>
+        </ul>
+        <button class="cta-btn" onclick="startQuiz()">Let's Gooo 🚀</button>
+      </div>
+    </section>
+
+    <!-- ===== SCREEN 6: QUIZ QUESTION ===== -->
+    <section id="quiz-screen" class="screen">
+      <div class="card quiz-card" id="quiz-card">
+
+        <!-- Header: progress + score -->
+        <div class="quiz-header">
+          <div class="quiz-progress-track">
+            <div class="quiz-progress-fill" id="quiz-progress-fill"></div>
+          </div>
+          <div class="quiz-meta">
+            <span class="q-counter" id="q-counter">Q 1 / 6</span>
+            <span class="q-score" id="q-score">⭐ 0</span>
+          </div>
+        </div>
+
+        <!-- Question -->
+        <div class="question-wrap">
+          <div class="question-emoji" id="question-emoji">🎂</div>
+          <p class="question-text" id="question-text">Loading...</p>
+        </div>
+
+        <!-- Options -->
+        <div class="options-grid" id="options-grid">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Feedback bubble (hidden by default) -->
+        <div class="feedback-bubble" id="feedback-bubble"></div>
+
+      </div>
+    </section>
+
+    <!-- ===== SCREEN 7: QUIZ RESULTS ===== -->
+    <section id="result-screen" class="screen">
+      <div class="card" id="result-card">
+        <div class="result-big-emoji" id="result-big-emoji">🏆</div>
+        <h2 class="result-big-title" id="result-big-title">Loading...</h2>
+        <p class="result-score-display" id="result-score-display">0 / 5</p>
+        <p class="result-message" id="result-message">...</p>
+        <div class="result-stars" id="result-stars"></div>
+        <button class="cta-btn" id="result-next-btn" onclick="goToNextMilestone()">
+          Next Mission 🔐
+        </button>
+        <p class="result-credit">Curated with 💜 by Prasad</p>
+      </div>
+    </section>
+
+    <!-- ===== SCREEN 8: WISTERIA TRIAL INTRO ===== -->
+    <section id="er-intro-screen" class="screen">
+      <div class="card wisteria-card" id="er-intro-card">
+        <div class="wisteria-petals-deco" aria-hidden="true">🌸🌸🌸</div>
+        <div class="er-intro-icon">⚔️</div>
+        <h2 class="er-intro-title wisteria-title">The Wisteria Trial</h2>
+        <p class="er-intro-sub wisteria-sub">
+          The forest has sealed its gates.<br/>
+          Five trials stand between you and the path home.
+        </p>
+        <ul class="er-rules wisteria-rules">
+          <li>🌸 Five trials of heart and memory</li>
+          <li>⏱️ The forest watches your time</li>
+          <li>💡 One whisper of guidance per trial</li>
+          <li>🎋 Complete all five — the gate opens</li>
+        </ul>
+        <div class="er-difficulty">
+          <span class="diff-badge">Trial:</span>
+          <span class="diff-level wisteria-diff">🌸 Wisteria Path</span>
+        </div>
+        <button class="cta-btn wisteria-btn" onclick="startEscapeRoom()">Enter the Forest 🌸</button>
+      </div>
+    </section>
+
+    <!-- ===== SCREEN 9: WISTERIA PUZZLE ===== -->
+    <section id="er-puzzle-screen" class="screen">
+      <div class="card er-card wisteria-card" id="er-card">
+
+        <!-- Top bar: puzzle # + timer -->
+        <div class="er-top-bar">
+          <div class="er-puzzle-tag wisteria-tag" id="er-puzzle-tag">🌸 Trial 1 / 5</div>
+          <div class="er-timer" id="er-timer">
+            <span class="timer-icon">⏱️</span>
+            <span id="timer-display">00:00</span>
+          </div>
+        </div>
+
+        <!-- Puzzle content area -->
+        <div class="er-puzzle-body" id="er-puzzle-body">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Hint area -->
+        <div class="er-hint-row">
+          <button class="hint-btn wisteria-hint-btn" id="hint-btn" onclick="useHint()">🌿 Whisper a Hint</button>
+          <div class="hint-text" id="hint-text"></div>
+        </div>
+
+        <!-- Feedback -->
+        <div class="er-feedback" id="er-feedback"></div>
+
+      </div>
+    </section>
+
+    <!-- ===== SCREEN 10: WISTERIA VICTORY ===== -->
+    <section id="er-success-screen" class="screen wisteria-victory-screen">
+
+      <!-- Fireflies layer -->
+      <div class="fireflies-layer" id="fireflies-layer"></div>
+
+      <!-- Lanterns layer -->
+      <div class="lanterns-layer" id="lanterns-layer"></div>
+
+      <!-- Falling cherry blossoms -->
+      <canvas id="blossom-canvas"></canvas>
+
+      <!-- Ceremony card -->
+      <div class="victory-ceremony" id="victory-ceremony">
+        <div class="victory-blossoms">🌸 🌸 🌸</div>
+        <h2 class="victory-title">The Wisteria Trial</h2>
+        <p class="victory-subtitle">Trial Complete</p>
+        <div class="victory-message" id="victory-message">
+          <!-- typed line by line -->
+        </div>
+        <div class="victory-time-row">
+          Completed in <span id="final-time" class="time-highlight">--:--</span>
+        </div>
+        <div class="er-badge-row victory-badges">
+          <span class="er-badge">🌸 Forest Keeper</span>
+          <span class="er-badge">⚔️ Trial Victor</span>
+          <span class="er-badge">👑 Birthday Queen</span>
+        </div>
+        <button class="cta-btn wisteria-btn" id="victory-next-btn"
+          style="opacity:0;pointer-events:none"
+          onclick="goToMilestone4()">
+          Continue the Journey 🔍
+        </button>
+      </div>
+    </section>
+
+    <!-- ===== SCREEN 11: HIDDEN BUTTON INTRO ===== -->
+    <section id="hb-intro-screen" class="screen">
+      <div class="card" id="hb-intro-card">
+        <div class="hb-intro-icon">🔍</div>
+        <h2 class="hb-intro-title">Hidden Button Challenge</h2>
+        <p class="hb-intro-sub">Prasad hid 5 secret buttons all over the screen.<br/>Can you find them all? 👀</p>
+        <ul class="hb-rules">
+          <li>🖱️ Click anywhere on the screen to hunt</li>
+          <li>⏳ You have <strong>60 seconds</strong></li>
+          <li>🎯 Find all 5 hidden buttons to win</li>
+          <li>🤫 They're sneaky. Just like Prasad.</li>
+        </ul>
+        <button class="cta-btn" onclick="startHiddenButtons()">Start Hunting 🕵️</button>
+      </div>
+    </section>
+
+    <!-- ===== SCREEN 12: HIDDEN BUTTON PLAY ===== -->
+    <section id="hb-play-screen" class="screen">
+      <!-- HUD bar at top -->
+      <div class="hb-hud" id="hb-hud">
+        <div class="hb-hud-item">
+          <span class="hud-label">Found</span>
+          <span class="hud-value" id="hb-found-count">0 / 5</span>
+        </div>
+        <div class="hb-hud-item center">
+          <span class="hud-label">⏱️ Time</span>
+          <span class="hud-value" id="hb-timer-display">60</span>
+        </div>
+        <div class="hb-hud-item right">
+          <span class="hud-label">Score</span>
+          <span class="hud-value" id="hb-score-display">0</span>
+        </div>
+      </div>
+
+      <!-- Clue ribbon -->
+      <div class="hb-clue-ribbon" id="hb-clue-ribbon">
+        🕵️ Psst... look everywhere. Corners, edges, the middle... 👀
+      </div>
+
+      <!-- Hidden buttons injected here by JS -->
+      <!-- Found flash overlay -->
+      <div class="hb-found-flash" id="hb-found-flash"></div>
+    </section>
+
+    <!-- ===== SCREEN 13: HIDDEN BUTTON SUCCESS ===== -->
+    <section id="hb-success-screen" class="screen">
+      <div class="card" id="hb-success-card">
+        <div class="hb-success-icon" id="hb-success-icon">🎉</div>
+        <h2 class="hb-success-title" id="hb-success-title">All Found!</h2>
+        <p class="hb-success-score">Score: <span id="hb-final-score" class="score-hl">0</span></p>
+        <p class="hb-success-time">Time left: <span id="hb-time-left" class="score-hl">--</span>s</p>
+        <p class="hb-success-msg" id="hb-success-msg">You found them all! Sneha has eagle eyes. 🦅</p>
+        <div class="hb-trophy-row" id="hb-trophy-row"></div>
+        <button class="cta-btn" onclick="goToMilestone5()">Next: Memory Wall 📸</button>
+      </div>
+    </section>
+
+    <!-- ===== SCREEN 14: HIDDEN BUTTON TIMEOUT ===== -->
+    <section id="hb-timeout-screen" class="screen">
+      <div class="card" id="hb-timeout-card">
+        <div class="hb-timeout-icon">⌛</div>
+        <h2 class="hb-timeout-title">Time's Up!</h2>
+        <p class="hb-timeout-found">You found <span id="hb-timeout-found" class="score-hl">0</span> / 5 buttons</p>
+        <p class="hb-timeout-msg">Sneha... Prasad hid them in plain sight too. 😂<br/>Don't worry, you still get to continue! 💜</p>
+        <button class="cta-btn" onclick="retryHiddenButtons()">Try Again 🔄</button>
+        <button class="cta-btn-ghost" onclick="goToMilestone5()">Skip → Memory Wall 📸</button>
+      </div>
+    </section>
+
+    <!-- ===== SCREEN 15: MEMORY WALL INTRO ===== -->
+    <section id="mw-intro-screen" class="screen">
+      <div class="card" id="mw-intro-card">
+        <div class="mw-intro-icon">📸</div>
+        <h2 class="mw-intro-title">Memory Wall</h2>
+        <p class="mw-intro-sub">
+          5 chapters of a friendship that changed everything.<br/>
+          Flip each card to relive the story. 🥹
+        </p>
+        <div class="mw-intro-stats">
+          <div class="mw-stat">
+            <span class="mw-stat-num">8</span>
+            <span class="mw-stat-label">Chapters</span>
+          </div>
+          <div class="mw-stat-divider"></div>
+          <div class="mw-stat">
+            <span class="mw-stat-num">1</span>
+            <span class="mw-stat-label">Bestie</span>
+          </div>
+          <div class="mw-stat-divider"></div>
+          <div class="mw-stat">
+            <span class="mw-stat-num">∞</span>
+            <span class="mw-stat-label">Chaos</span>
+          </div>
+        </div>
+        <button class="cta-btn" onclick="startMemoryWall()">Open the Wall 🖼️</button>
+      </div>
+    </section>
+
+    <!-- ===== SCREEN 16: MEMORY WALL ===== -->
+    <section id="mw-wall-screen" class="screen mw-wall-screen">
+
+      <!-- Sticky header -->
+      <div class="mw-header" id="mw-header">
+        <div class="mw-header-left">
+          <span class="mw-header-title">📸 Memory Wall</span>
+          <span class="mw-flipped-count" id="mw-flipped-count">0 / 8 flipped</span>
+        </div>
+        <button class="mw-done-btn" id="mw-done-btn" onclick="finishMemoryWall()" disabled>
+          Continue 💌
+        </button>
+      </div>
+
+      <!-- Cards grid -->
+      <div class="mw-grid" id="mw-grid">
+        <!-- Polaroid cards injected by JS -->
+      </div>
+
+      <!-- All-flipped celebration banner (hidden) -->
+      <div class="mw-celebrate-banner" id="mw-celebrate-banner">
+        ❤️ Happy Birthday, Sneha. Thank you for making life a little brighter, a little funnier, and a lot more memorable.
+      </div>
+    </section>
+
+    <!-- ===== MEMORY MODAL ===== -->
+    <div class="mw-modal-overlay" id="mw-modal-overlay" onclick="closeMemoryModal()">
+      <div class="mw-modal" id="mw-modal" onclick="event.stopPropagation()">
+        <button class="mw-modal-close" onclick="closeMemoryModal()">✕</button>
+        <div class="mw-modal-emoji" id="mw-modal-emoji">📸</div>
+        <h3 class="mw-modal-title" id="mw-modal-title">Memory Title</h3>
+        <p class="mw-modal-date"  id="mw-modal-date">Some day, sometime</p>
+        <p class="mw-modal-story" id="mw-modal-story">Story goes here...</p>
+        <div class="mw-modal-tags" id="mw-modal-tags"></div>
+      </div>
+    </div>
+
+    <!-- ===== SCREEN 17: GRAND FINALE ===== -->
+    <section id="finale-screen" class="screen finale-screen">
+
+      <!-- Confetti canvas (separate from starfield) -->
+      <canvas id="finale-confetti-canvas"></canvas>
+
+      <!-- Fireworks layer -->
+      <div class="fireworks-layer" id="fireworks-layer"></div>
+
+      <!-- Scrollable content -->
+      <div class="finale-scroll" id="finale-scroll">
+
+        <!-- ── BLOCK 1: Big Greeting ── -->
+        <div class="finale-block" id="finale-block-1">
+          <div class="finale-balloons" id="finale-balloons">
+            <span>🎈</span><span>🎉</span><span>🎂</span><span>🎈</span><span>✨</span>
+          </div>
+          <h1 class="finale-big-title" id="finale-big-title">
+            Happy Birthday
+          </h1>
+          <h2 class="finale-name-title" id="finale-name-title">Sneha 👑</h2>
+          <p class="finale-age-tag" id="finale-age-tag">Another year of being absolutely iconic ✨</p>
+        </div>
+
+        <!-- ── BLOCK 2: Music Player ── -->
+        <div class="finale-block" id="finale-block-2">
+          <div class="music-player" id="music-player">
+            <div class="music-disc" id="music-disc">🎵</div>
+            <div class="music-info">
+              <p class="music-title">Happy Birthday, Sneha 🎂</p>
+              <p class="music-sub">A playlist curated just for you</p>
+            </div>
+            <button class="music-play-btn" id="music-play-btn" onclick="toggleMusic()">
+              ▶
+            </button>
+          </div>
+          <!-- Hidden audio element — drop your mp3 in assets/music/ -->
+          <audio id="birthday-audio" loop>
+            <source src="assets/music/birthday.mp3" type="audio/mpeg" />
+          </audio>
+          <p class="music-hint">🎵 Add <code>birthday.mp3</code> to <code>assets/music/</code> to enable music</p>
+        </div>
+
+        <!-- ── BLOCK 3: Letter from Prasad ── -->
+        <div class="finale-block" id="finale-block-3">
+          <div class="letter-card" id="letter-card">
+            <div class="letter-header">
+              <span class="letter-icon">💌</span>
+              <p class="letter-label">A letter from Prasad</p>
+            </div>
+            <div class="letter-body" id="letter-body">
+              <!-- typed by JS -->
+            </div>
+            <div class="letter-sign" id="letter-sign">
+              — Prasad 💜
+            </div>
+          </div>
+        </div>
+
+        <!-- ── BLOCK 4: Birthday Wishes ── -->
+        <div class="finale-block" id="finale-block-4">
+          <h3 class="wishes-heading">🌟 Wishes for Sneha</h3>
+          <div class="wishes-grid" id="wishes-grid">
+            <!-- wish cards injected by JS -->
+          </div>
+        </div>
+
+        <!-- ── BLOCK 5: Final Card ── -->
+        <div class="finale-block" id="finale-block-5">
+          <div class="final-card" id="final-card">
+            <div class="final-card-glow"></div>
+            <div class="final-top-emoji">🥂</div>
+            <h2 class="final-card-title">You made it through all 7 missions!</h2>
+            <p class="final-card-sub">
+              From the identity scan to this very moment —<br/>
+              every single step was made just for <span class="name-highlight">you</span>.
+            </p>
+            <div class="final-hearts" id="final-hearts">
+              💜💜💜💜💜
+            </div>
+            <p class="final-from">
+              With all the love (and 0 sleep),<br/>
+              <strong>Prasad</strong> 🌙
+            </p>
+            <!-- Restart button -->
+            <button class="cta-btn finale-restart-btn" onclick="restartExperience()">
+              🔄 Start Over (for Sneha's friends 😂)
+            </button>
+          </div>
+
+          <!-- Absolute bottom signature -->
+          <p class="finale-footer">
+            Built with 💜 by Prasad · Happy Birthday Sneha 🎂
+          </p>
+        </div>
+
+      </div><!-- /finale-scroll -->
+    </section>
+
+    <!-- Script -->
+    <script src="script.js"></script>
+  </body>
+</html>
