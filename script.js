@@ -457,7 +457,7 @@ const RESULT_TIERS = [
     min: 5, max: 5,
     emoji: "🔥",
     title: "So Close!",
-    message: "Almost perfect! You know this friendship really well. Prasad is impressed (but won't admit it out loud). 😌✨",
+    message: "Almost perfect! You know this friendship really well. Someone is impressed (but won't admit it out loud). 😌✨",
     stars: "⭐⭐⭐⭐",
   },
   {
@@ -715,17 +715,22 @@ const ER_PUZZLES = [
   },
   {
     id: 3,
-    type: "bamboo-arrange",
-    title: "🎋 Bamboo Puzzle",
-    desc: "Five bamboo scrolls each hold one letter. Tap them in the correct order to spell your name.",
-    scrollLetters: ["H","S","A","N","E"],
-    answer: ["S","N","E","H","A"],
-    hint: "🌿 Tap the scrolls in this order: S · N · E · H · A",
-    successMsg: "🎋 The bamboo glows. Hidden path revealed. Third seal broken.",
+    type: "song-pick",
+    title: "🎵 The Song That Knows",
+    desc: "A melody drifts through the forest... one song holds the key. Which song lives closest to your heart?",
+    songs: [
+      "hum tere pyar me sara alam kho baithe",
+      "abhi na jao chhod kar",
+      "itna na mujhse pyar badha",
+      "bahon mein chale aao",
+    ],
+    correct: 0,
+    hint: "🌿 The one that starts with 'hum'... it knows everything.",
+    successMsg: "🎆 The forest erupts in light. The song recognised you. Third seal broken.",
     failMsgs: [
-      "🍃 The scrolls resist... try a different order.",
-      "🌙 Not yet. The bamboo waits for the correct arrangement.",
-      "✨ Think about how your name is spelled. S-N-E-H-A.",
+      "🎵 Beautiful choice... but not the one. Listen closer.",
+      "🌙 The melody fades... try again. Feel the song.",
+      "✨ So close! Think about the song that means the most.",
     ],
   },
   {
@@ -853,7 +858,7 @@ function renderPuzzle(index) {
   switch (p.type) {
     case "memory-tiles":    renderMemoryTiles(p, body);   break;
     case "petal-collect":   renderPetalCollect(p, body);  break;
-    case "bamboo-arrange":  renderBambooArrange(p, body); break;
+    case "song-pick":       renderSongPick(p, body);      break;
     case "memory-orbs":     renderMemoryOrbs(p, body);    break;
     case "final-gate":      renderFinalGate(p, body);     break;
   }
@@ -995,7 +1000,129 @@ window.resetPetals = function () {
   clearFeedback();
 };
 
-// ── PUZZLE 3: BAMBOO ARRANGE ──────────────────────────────
+// ── PUZZLE 3: SONG PICK ───────────────────────────────────
+function renderSongPick(p, body) {
+  const songsHTML = p.songs.map((song, i) => `
+    <button class="song-choice-btn" onclick="selectSong(${i})">
+      <span class="song-note">🎵</span>
+      <span class="song-label">${song}</span>
+    </button>
+  `).join("");
+
+  body.innerHTML = `
+    <p class="puzzle-title">${p.title}</p>
+    <p class="puzzle-desc">${p.desc}</p>
+    <div class="song-choices">${songsHTML}</div>`;
+}
+
+window.selectSong = function (index) {
+  const p    = ER_PUZZLES[erState.currentPuzzle];
+  const btns = document.querySelectorAll(".song-choice-btn");
+  btns.forEach(b => b.disabled = true);
+
+  if (index === p.correct) {
+    btns[index].classList.add("song-correct");
+    showFeedback(p.successMsg, "success");
+    flashUnlock();
+    // 🎆 Japanese hanabi fireworks!
+    launchHanabiFireworks();
+    setTimeout(() => advancePuzzle(), 2800);
+  } else {
+    btns[index].classList.add("song-wrong");
+    erState.attempts++;
+    const msg = p.failMsgs[(erState.attempts - 1) % p.failMsgs.length];
+    showFeedback(msg, "error");
+    setTimeout(() => {
+      btns.forEach(b => { b.disabled = false; b.classList.remove("song-wrong"); });
+      clearFeedback();
+    }, 1200);
+  }
+};
+
+// ── JAPANESE HANABI FIREWORKS ─────────────────────────────
+function launchHanabiFireworks() {
+  const layer = document.getElementById("er-card");
+  const colors = [
+    "#facc15","#fde68a","#fb7185","#f472b6",
+    "#c084fc","#818cf8","#38bdf8","#86efac","#fff"
+  ];
+
+  // Spawn 6 bursts across the screen
+  const positions = [
+    {x:"20%", y:"25%"}, {x:"50%", y:"15%"}, {x:"80%", y:"25%"},
+    {x:"30%", y:"55%"}, {x:"70%", y:"55%"}, {x:"50%", y:"40%"},
+  ];
+
+  positions.forEach((pos, bi) => {
+    setTimeout(() => {
+      // Canvas-confetti burst at each position
+      const xFrac = parseFloat(pos.x) / 100;
+      const yFrac = parseFloat(pos.y) / 100;
+
+      // Main starburst
+      confetti({
+        particleCount: 60,
+        spread: 360,
+        startVelocity: 20,
+        origin: { x: xFrac, y: yFrac },
+        colors,
+        scalar: 0.85,
+        ticks: 120,
+        gravity: 0.5,
+      });
+
+      // Ring of gold
+      confetti({
+        particleCount: 20,
+        spread: 360,
+        startVelocity: 8,
+        origin: { x: xFrac, y: yFrac },
+        colors: ["#facc15","#fde68a","#fff"],
+        scalar: 0.6,
+        ticks: 80,
+        gravity: 0.3,
+      });
+
+      // Hanabi kanji spark overlay on card
+      spawnHanabiSpark(xFrac, yFrac, colors);
+
+    }, bi * 300);
+  });
+
+  // Final grand burst
+  setTimeout(() => {
+    confetti({
+      particleCount: 150,
+      spread: 100,
+      origin: { x: 0.5, y: 0.4 },
+      colors,
+      scalar: 1.1,
+      ticks: 200,
+    });
+  }, positions.length * 300 + 100);
+}
+
+function spawnHanabiSpark(xFrac, yFrac, colors) {
+  const el = document.createElement("div");
+  el.className = "hanabi-spark";
+  el.style.cssText = `
+    position: fixed;
+    left: ${xFrac * 100}%;
+    top:  ${yFrac * 100}%;
+    transform: translate(-50%, -50%);
+    font-size: ${1.2 + Math.random() * 1.2}rem;
+    pointer-events: none;
+    z-index: 9999;
+    animation: hanabiPop 0.8s ease forwards;
+  `;
+  const sparks = ["✦","✧","꩜","✺","❋","✻","✼","❊"];
+  el.textContent = sparks[Math.floor(Math.random() * sparks.length)];
+  el.style.color = colors[Math.floor(Math.random() * colors.length)];
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 900);
+}
+
+// ── PUZZLE 3 (old): BAMBOO ARRANGE — kept for reference ───
 function renderBambooArrange(p, body) {
   const scrollsHTML = p.scrollLetters.map((letter, i) =>
     `<button class="bamboo-scroll" data-letter="${letter}" onclick="tapBamboo(this)">${letter}</button>`
@@ -1948,8 +2075,23 @@ function onAllCardsFlipped() {
   btn.disabled = false;
   gsap.fromTo(btn, { scale: 0.85 }, { scale: 1, duration: 0.5, ease: "back.out(2)" });
 
-  // Big confetti
-  launchConfetti();
+  // Golden confetti waves
+  const goldColors = ["#facc15","#fde68a","#f59e0b","#fbbf24","#fff","#fb923c"];
+
+  confetti({ particleCount: 200, spread: 120, origin: { y: 0.5 }, colors: goldColors, scalar: 1.3 });
+
+  setTimeout(() => {
+    confetti({ particleCount: 100, angle: 60,  spread: 80, origin: { x: 0, y: 0.5 }, colors: goldColors });
+    confetti({ particleCount: 100, angle: 120, spread: 80, origin: { x: 1, y: 0.5 }, colors: goldColors });
+  }, 400);
+
+  setTimeout(() => {
+    confetti({ particleCount: 120, spread: 100, origin: { y: 0.3 }, colors: goldColors, scalar: 1.1, gravity: 0.4, ticks: 300 });
+  }, 900);
+
+  setTimeout(() => {
+    confetti({ particleCount: 80, spread: 360, startVelocity: 15, origin: { x: 0.5, y: 0.5 }, colors: goldColors, scalar: 0.8 });
+  }, 1500);
 }
 
 // ── UPDATE HEADER ──────────────────────────────────────────

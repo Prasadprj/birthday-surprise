@@ -1857,23 +1857,102 @@ html, body {
 /* ── CELEBRATION BANNER ────────────────── */
 .mw-celebrate-banner {
   display: none;
-  position: sticky;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 50;
-  text-align: center;
-  padding: 0.8rem;
-  background: linear-gradient(135deg, var(--accent1), var(--accent2));
-  color: var(--bg);
-  font-family: var(--font-title);
-  font-size: clamp(0.8rem, 2.5vw, 1rem);
-  font-weight: 700;
-  letter-spacing: 0.05rem;
-  animation: bannerSlideUp 0.5s ease;
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(ellipse at center, rgba(10,6,0,0.97) 0%, rgba(5,0,15,0.99) 100%);
+  animation: bannerFadeIn 0.8s ease forwards;
 }
 
-.mw-celebrate-banner.show { display: block; }
+.mw-celebrate-banner.show {
+  display: flex;
+}
+
+@keyframes bannerFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.mw-celebrate-inner {
+  position: relative;
+  text-align: center;
+  padding: 2rem;
+  z-index: 2;
+}
+
+.mw-celebrate-sparks {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.mw-celebrate-emoji {
+  font-size: 2.2rem;
+  letter-spacing: 0.8rem;
+  margin-bottom: 1.2rem;
+  animation: celebEmojiPulse 1.5s ease-in-out infinite;
+  filter: drop-shadow(0 0 12px rgba(250,204,21,0.8));
+}
+
+@keyframes celebEmojiPulse {
+  0%, 100% { transform: scale(1);    opacity: 1;   }
+  50%       { transform: scale(1.15); opacity: 0.8; }
+}
+
+.mw-celebrate-title {
+  font-family: var(--font-title);
+  font-size: clamp(2rem, 8vw, 4rem);
+  background: linear-gradient(135deg, #facc15, #fde68a, #f59e0b, #facc15);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: goldShimmer 2s linear infinite, titleGlow 2s ease-in-out infinite;
+  margin-bottom: 1.2rem;
+  line-height: 1.2;
+  filter: drop-shadow(0 0 30px rgba(250,204,21,0.6));
+}
+
+@keyframes goldShimmer {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes titleGlow {
+  0%, 100% { filter: drop-shadow(0 0 20px rgba(250,204,21,0.5)); }
+  50%       { filter: drop-shadow(0 0 50px rgba(250,204,21,0.9)) drop-shadow(0 0 80px rgba(251,191,36,0.5)); }
+}
+
+.mw-celebrate-msg {
+  font-size: clamp(1rem, 3vw, 1.3rem);
+  color: #fde68a;
+  line-height: 1.9;
+  font-weight: 600;
+  margin-bottom: 1.4rem;
+  text-shadow: 0 0 20px rgba(250,204,21,0.4);
+  animation: msgFadeIn 1s ease 0.5s both;
+}
+
+@keyframes msgFadeIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.mw-celebrate-hearts {
+  font-size: 2rem;
+  letter-spacing: 0.5rem;
+  animation: heartPulseGold 1.2s ease-in-out infinite;
+  filter: drop-shadow(0 0 10px rgba(250,204,21,0.7));
+}
+
+@keyframes heartPulseGold {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.2); }
+}
 
 @keyframes bannerSlideUp {
   from { transform: translateY(100%); opacity: 0; }
@@ -2777,7 +2856,103 @@ html, body {
   line-height: 1.5;
 }
 
-/* ── PUZZLE 3: BAMBOO SCROLLS ──────────── */
+/* ── PUZZLE 3: SONG PICK ───────────────────────────────── */
+.song-choices {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 0.8rem;
+}
+
+.song-choice-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.9rem 1.1rem;
+  border-radius: 14px;
+  border: 1.5px solid rgba(192,132,252,0.35);
+  background: rgba(192,132,252,0.06);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+  line-height: 1.4;
+  animation: songFloat 3s ease-in-out infinite;
+  position: relative;
+  overflow: hidden;
+}
+
+.song-choice-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(192,132,252,0.08), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.4s ease;
+}
+
+.song-choice-btn:hover::before { transform: translateX(100%); }
+
+.song-choice-btn:nth-child(2) { animation-delay: 0.3s; }
+.song-choice-btn:nth-child(3) { animation-delay: 0.6s; }
+.song-choice-btn:nth-child(4) { animation-delay: 0.9s; }
+
+@keyframes songFloat {
+  0%, 100% { transform: translateY(0); box-shadow: 0 0 8px rgba(192,132,252,0.15); }
+  50%       { transform: translateY(-3px); box-shadow: 0 4px 20px rgba(192,132,252,0.3); }
+}
+
+.song-choice-btn:hover:not(:disabled) {
+  background: rgba(192,132,252,0.18);
+  border-color: #c084fc;
+  transform: translateY(-2px) scale(1.01) !important;
+  box-shadow: 0 4px 20px rgba(192,132,252,0.4);
+  animation: none;
+}
+
+.song-note {
+  font-size: 1.3rem;
+  flex-shrink: 0;
+  animation: noteWiggle 1.5s ease-in-out infinite;
+}
+
+@keyframes noteWiggle {
+  0%, 100% { transform: rotate(-8deg) scale(1); }
+  50%       { transform: rotate(8deg) scale(1.15); }
+}
+
+.song-label { font-style: italic; letter-spacing: 0.01rem; }
+
+.song-choice-btn.song-correct {
+  background: rgba(250,204,21,0.2);
+  border-color: #facc15;
+  color: #fde68a;
+  box-shadow: 0 0 24px rgba(250,204,21,0.5), 0 0 48px rgba(250,204,21,0.2);
+  animation: songWin 0.5s ease forwards;
+}
+
+.song-choice-btn.song-wrong {
+  background: rgba(239,68,68,0.15);
+  border-color: #ef4444;
+  animation: wrongShake 0.4s ease;
+}
+
+@keyframes songWin {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.05); }
+  100% { transform: scale(1.02); }
+}
+
+@keyframes hanabiPop {
+  0%   { transform: translate(-50%,-50%) scale(0) rotate(0deg);    opacity: 1; }
+  50%  { transform: translate(-50%,-50%) scale(1.8) rotate(180deg); opacity: 0.9; }
+  100% { transform: translate(-50%,-50%) scale(0.5) rotate(360deg); opacity: 0; }
+}
+
+/* ── PUZZLE 3 (old): BAMBOO SCROLLS ──────────── */
 .bamboo-instruction {
   font-size: 0.85rem;
   color: rgba(221,214,254,0.7);
