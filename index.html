@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Nunito:wght@400;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Nunito:wght@400;600;700;800&family=VT323&display=swap"
       rel="stylesheet"
     />
 
@@ -62,284 +62,220 @@
       </div>
     </section>
 
-    <!-- ===== SCREEN 2: IDENTITY VERIFICATION ===== -->
+    <!-- ===== SCREEN 2: IDENTITY VERIFICATION — WISTERIA TERMINAL ===== -->
     <section id="verify-screen" class="screen">
-      <div class="card" id="verify-card">
 
-        <div class="lock-icon">🔒</div>
-        <h2 class="verify-title">Identity Verification</h2>
-        <p class="verify-subtitle">Are you really <span class="name-highlight">Sneha</span>?</p>
-        <p class="verify-hint">(Think very carefully before answering 👀)</p>
+      <!-- CRT scanline overlay -->
+      <div class="terminal-scanlines"></div>
 
-        <div class="verify-buttons">
-          <button class="verify-btn yes-btn" onclick="handleVerify('yes')">✅ YES, it's me!</button>
-          <button class="verify-btn no-btn" onclick="handleVerify('no')">❌ No...</button>
+      <!-- Terminal flicker overlay -->
+      <div class="terminal-flicker"></div>
+
+      <div class="wisteria-terminal" id="wisteria-terminal">
+
+        <!-- All lines typed in by JS, this is the container -->
+        <div class="terminal-body" id="terminal-body"></div>
+
+        <!-- Buttons — hidden until JS reveals them -->
+        <div class="terminal-btn-row" id="terminal-btn-row" style="opacity:0;pointer-events:none;">
+          <button class="terminal-btn terminal-btn-yes" onclick="handleVerify('yes')">⚔️ Obviously.</button>
+          <button class="terminal-btn terminal-btn-no"  onclick="handleVerify('no')">🏃 I'm not Sneha</button>
         </div>
+
       </div>
     </section>
 
-    <!-- ===== SCREEN 3: ACCESS DENIED ===== -->
+    <!-- ===== SCREEN 3: ACCESS DENIED — SYSTEM ALERT ===== -->
     <section id="denied-screen" class="screen">
-      <div class="card" id="denied-card">
-        <div class="denied-icon">🚫</div>
-        <h2 class="denied-title">Access Denied</h2>
-        <p class="denied-msg">Only Sneha can continue.</p>
-        <p class="denied-sub">Sorry bestie, wrong person! 😂</p>
-        <button class="cta-btn small" onclick="goBack()">← Go Back</button>
+
+      <!-- CRT scanline overlay -->
+      <div class="terminal-scanlines"></div>
+      <div class="terminal-flicker"></div>
+
+      <!-- Alert strobe layer -->
+      <div class="alert-strobe" id="alert-strobe"></div>
+
+      <div class="wisteria-terminal alert-terminal" id="denied-terminal">
+        <div class="terminal-body" id="denied-body"></div>
+
+        <div class="terminal-btn-row" id="denied-btn-row" style="opacity:0;pointer-events:none;">
+          <button class="terminal-btn terminal-btn-yes" onclick="goBack()">[ Fine... Let me in ]</button>
+        </div>
       </div>
     </section>
 
-    <!-- ===== SCREEN 4: SCANNING ===== -->
-    <section id="scan-screen" class="screen">
-      <div class="card" id="scan-card">
+    <!-- ===== SCREEN 5: THE SONG THAT KNOWS ===== -->
+    <section id="song-screen" class="screen">
 
-        <div class="scan-emoji" id="scan-emoji">🤳</div>
-        <h2 class="scan-title" id="scan-title">Scanning Face...</h2>
+      <!-- Floating musical notes layer -->
+      <div class="song-notes-layer" id="song-notes-layer"></div>
 
-        <!-- Progress Bar -->
-        <div class="progress-wrap">
-          <div class="progress-bar" id="progress-bar"></div>
+      <!-- Wisteria vine decorations -->
+      <div class="song-vines-left"  aria-hidden="true">🌿</div>
+      <div class="song-vines-right" aria-hidden="true">🌿</div>
+
+      <div class="song-container" id="song-container">
+
+        <!-- Music box icon -->
+        <div class="song-box-wrap" id="song-box-wrap">
+          <div class="song-box-glow"></div>
+          <div class="song-box-icon" id="song-box-icon">🎵</div>
         </div>
-        <p class="progress-label" id="progress-label">0%</p>
 
-        <!-- Scan lines (fake dramatic effect) -->
-        <div class="scan-lines" id="scan-lines"></div>
+        <!-- Title -->
+        <h2 class="song-title">The Song That Knows</h2>
+        <p class="song-subtitle">A melody drifts through the forest...<br/>one song holds the key.</p>
+        <p class="song-prompt">Which song lives closest to your heart?</p>
 
-        <!-- Result (hidden initially) -->
-        <div class="scan-result" id="scan-result">
-          <div class="result-icon">✅</div>
-          <h2 class="result-title">Identity Confirmed!</h2>
-          <p class="result-subtitle">Welcome back, <span class="name-highlight">Birthday Queen 👑</span></p>
-          <button class="cta-btn" id="continue-btn" onclick="startAdventure()">
-            🎉 Let's Go!
+        <!-- Song scroll cards -->
+        <div class="song-scrolls" id="song-scrolls">
+
+          <div class="song-scroll" data-index="0" onclick="selectSongScroll(0)">
+            <div class="scroll-glyph">𝄞</div>
+            <div class="scroll-text">hum tere pyar me sara alam kho baithe</div>
+            <div class="scroll-shimmer"></div>
+          </div>
+
+          <div class="song-scroll" data-index="1" onclick="selectSongScroll(1)">
+            <div class="scroll-glyph">𝄞</div>
+            <div class="scroll-text">abhi na jao chhod kar</div>
+            <div class="scroll-shimmer"></div>
+          </div>
+
+          <div class="song-scroll" data-index="2" onclick="selectSongScroll(2)">
+            <div class="scroll-glyph">𝄞</div>
+            <div class="scroll-text">itna na mujhse pyar badha</div>
+            <div class="scroll-shimmer"></div>
+          </div>
+
+          <div class="song-scroll" data-index="3" onclick="selectSongScroll(3)">
+            <div class="scroll-glyph">𝄞</div>
+            <div class="scroll-text">bahon mein chale aao</div>
+            <div class="scroll-shimmer"></div>
+          </div>
+
+        </div>
+
+        <!-- Feedback line -->
+        <div class="song-feedback" id="song-feedback"></div>
+
+      </div>
+    </section>
+
+    <!-- ===== SCREEN 11: PEOPLE INTRO ===== -->
+    <section id="people-intro-screen" class="screen">
+
+      <!-- Full-screen background photo (blurs in → focuses) -->
+      <div class="pi-bg" id="pi-bg"></div>
+
+      <!-- Dark warm gradient overlay (bottom-heavy so text is readable) -->
+      <div class="pi-overlay"></div>
+
+      <!-- Floating wisteria petals layer -->
+      <div class="pi-petals" id="pi-petals"></div>
+
+      <!-- Centred text content -->
+      <div class="pi-content" id="pi-content">
+
+        <!-- Sparkle icon -->
+        <div class="pi-sparkle" id="pi-sparkle">✨</div>
+
+        <!-- Sequential typed lines -->
+        <p class="pi-line" id="pi-line-1"></p>
+        <p class="pi-line pi-line-pause" id="pi-line-2"></p>
+        <p class="pi-line pi-line-final" id="pi-line-3"></p>
+
+        <!-- CTA button -->
+        <div class="pi-cta" id="pi-cta">
+          <button class="cta-btn pi-cta-btn" onclick="openEnvelopeGarden()">
+            Meet Your People →
           </button>
         </div>
+
       </div>
     </section>
 
-    <!-- ===== SCREEN 5: QUIZ INTRO ===== -->
-    <section id="quiz-intro-screen" class="screen">
-      <div class="card" id="quiz-intro-card">
-        <div class="quiz-intro-icon">🧠</div>
-        <h2 class="quiz-intro-title">Birthday Quiz</h2>
-        <p class="quiz-intro-sub">
-          Let's see how well someone knows their favourite person... 👀
-        </p>
-        <ul class="quiz-rules">
-          <li>🎯 6 questions about you & a mystery someone 🌙</li>
-          <li>💅 Every answer is personal</li>
-          <li>😂 Some questions won't let you move until you get it right 👀</li>
-          <li>👑 Score high = big surprise at the end</li>
-        </ul>
-        <button class="cta-btn" onclick="startQuiz()">Let's Gooo 🚀</button>
+    <!-- ===== SCREEN 12: ENVELOPE GARDEN ===== -->
+    <section id="envelope-garden-screen" class="screen">
+
+      <!-- Star tracker bar -->
+      <div class="env-star-bar" id="env-star-bar">
+        <div class="env-star-label">Letters opened</div>
+        <div class="env-stars" id="env-stars"></div>
       </div>
-    </section>
 
-    <!-- ===== SCREEN 6: QUIZ QUESTION ===== -->
-    <section id="quiz-screen" class="screen">
-      <div class="card quiz-card" id="quiz-card">
+      <!-- Floating envelopes garden -->
+      <div class="env-garden" id="env-garden">
+        <!-- Envelopes injected by JS -->
+      </div>
 
-        <!-- Header: progress + score -->
-        <div class="quiz-header">
-          <div class="quiz-progress-track">
-            <div class="quiz-progress-fill" id="quiz-progress-fill"></div>
-          </div>
-          <div class="quiz-meta">
-            <span class="q-counter" id="q-counter">Q 1 / 6</span>
-            <span class="q-score" id="q-score">⭐ 0</span>
-          </div>
+      <!-- All-opened unlock banner (hidden) -->
+      <div class="env-all-banner" id="env-all-banner">
+        <div class="env-all-inner">
+          <div class="env-all-sparkle">✨ ALL MESSAGES UNLOCKED ✨</div>
+          <p class="env-all-msg">
+            There are a lot of people<br/>
+            who care about you, Sneha.<br/><br/>
+            But...<br/><br/>
+            there's still one message left.
+          </p>
         </div>
-
-        <!-- Question -->
-        <div class="question-wrap">
-          <div class="question-emoji" id="question-emoji">🎂</div>
-          <p class="question-text" id="question-text">Loading...</p>
-        </div>
-
-        <!-- Options -->
-        <div class="options-grid" id="options-grid">
-          <!-- Populated by JS -->
-        </div>
-
-        <!-- Feedback bubble (hidden by default) -->
-        <div class="feedback-bubble" id="feedback-bubble"></div>
-
       </div>
+
+      <!-- Black envelope (shown after all friend letters opened) -->
+      <div class="env-black-wrap" id="env-black-wrap" style="display:none;">
+        <div class="env-black" id="env-black" onclick="openBlackEnvelope()">
+          <div class="env-black-icon">🖤</div>
+          <div class="env-black-label">ONE LAST LETTER</div>
+          <div class="env-black-pulse"></div>
+        </div>
+      </div>
+
     </section>
 
-    <!-- ===== SCREEN 7: QUIZ RESULTS ===== -->
-    <section id="result-screen" class="screen">
-      <div class="card" id="result-card">
-        <div class="result-big-emoji" id="result-big-emoji">🏆</div>
-        <h2 class="result-big-title" id="result-big-title">Loading...</h2>
-        <p class="result-score-display" id="result-score-display">0 / 5</p>
-        <p class="result-message" id="result-message">...</p>
-        <div class="result-stars" id="result-stars"></div>
-        <button class="cta-btn" id="result-next-btn" onclick="goToNextMilestone()">
-          Next Mission 🔐
-        </button>
-        <p class="result-credit">Curated with 💜 by your mystery person 🌙</p>
-      </div>
-    </section>
+    <!-- ===== LETTER MODAL ===== -->
+    <div class="letter-modal-overlay" id="letter-modal-overlay">
+      <div class="letter-modal" id="letter-modal">
 
-    <!-- ===== SCREEN 8: WISTERIA TRIAL INTRO ===== -->
-    <section id="er-intro-screen" class="screen">
-      <div class="card wisteria-card" id="er-intro-card">
-        <div class="wisteria-petals-deco" aria-hidden="true">🌸🌸🌸</div>
-        <div class="er-intro-icon">⚔️</div>
-        <h2 class="er-intro-title wisteria-title">The Wisteria Trial</h2>
-        <p class="er-intro-sub wisteria-sub">
-          The forest has sealed its gates.<br/>
-          Five trials stand between you and the path home.
-        </p>
-        <ul class="er-rules wisteria-rules">
-          <li>🌸 Five trials of heart and memory</li>
-          <li>⏱️ The forest watches your time</li>
-          <li>💡 One whisper of guidance per trial</li>
-          <li>🎋 Complete all five — the gate opens</li>
-        </ul>
-        <div class="er-difficulty">
-          <span class="diff-badge">Trial:</span>
-          <span class="diff-level wisteria-diff">🌸 Wisteria Path</span>
-        </div>
-        <button class="cta-btn wisteria-btn" onclick="startEscapeRoom()">Enter the Forest 🌸</button>
-      </div>
-    </section>
-
-    <!-- ===== SCREEN 9: WISTERIA PUZZLE ===== -->
-    <section id="er-puzzle-screen" class="screen">
-      <div class="card er-card wisteria-card" id="er-card">
-
-        <!-- Top bar: puzzle # + timer -->
-        <div class="er-top-bar">
-          <div class="er-puzzle-tag wisteria-tag" id="er-puzzle-tag">🌸 Trial 1 / 5</div>
-          <div class="er-timer" id="er-timer">
-            <span class="timer-icon">⏱️</span>
-            <span id="timer-display">00:00</span>
+        <!-- Envelope animation layer -->
+        <div class="lm-envelope-wrap" id="lm-envelope-wrap">
+          <div class="lm-envelope" id="lm-envelope">
+            <div class="lm-env-body"></div>
+            <div class="lm-env-flap" id="lm-env-flap"></div>
+            <div class="lm-env-icon">💌</div>
           </div>
         </div>
 
-        <!-- Puzzle content area -->
-        <div class="er-puzzle-body" id="er-puzzle-body">
-          <!-- Populated by JS -->
-        </div>
+        <!-- Letter content (shown after envelope opens) -->
+        <div class="lm-content" id="lm-content" style="opacity:0;">
 
-        <!-- Hint area -->
-        <div class="er-hint-row">
-          <button class="hint-btn wisteria-hint-btn" id="hint-btn" onclick="useHint()">🌿 Whisper a Hint</button>
-          <div class="hint-text" id="hint-text"></div>
-        </div>
+          <!-- Quote block -->
+          <div class="lm-quote-block" id="lm-quote-block">
+            <div class="lm-quote-divider"></div>
+            <p class="lm-quote" id="lm-quote"></p>
+            <div class="lm-quote-divider"></div>
+          </div>
 
-        <!-- Feedback -->
-        <div class="er-feedback" id="er-feedback"></div>
+          <!-- Polaroid -->
+          <div class="lm-polaroid" id="lm-polaroid">
+            <div class="lm-polaroid-img" id="lm-polaroid-img"></div>
+            <div class="lm-polaroid-name" id="lm-polaroid-name"></div>
+          </div>
 
-      </div>
-    </section>
+          <!-- Message -->
+          <div class="lm-message-wrap">
+            <p class="lm-message" id="lm-message"></p>
+            <p class="lm-sign" id="lm-sign"></p>
+          </div>
 
-    <!-- ===== SCREEN 10: WISTERIA VICTORY ===== -->
-    <section id="er-success-screen" class="screen wisteria-victory-screen">
+          <!-- Next button -->
+          <button class="cta-btn lm-next-btn" id="lm-next-btn" onclick="closeLetter()">
+            Open next letter →
+          </button>
 
-      <!-- Fireflies layer -->
-      <div class="fireflies-layer" id="fireflies-layer"></div>
-
-      <!-- Lanterns layer -->
-      <div class="lanterns-layer" id="lanterns-layer"></div>
-
-      <!-- Falling cherry blossoms -->
-      <canvas id="blossom-canvas"></canvas>
-
-      <!-- Ceremony card -->
-      <div class="victory-ceremony" id="victory-ceremony">
-        <div class="victory-blossoms">🌸 🌸 🌸</div>
-        <h2 class="victory-title">The Wisteria Trial</h2>
-        <p class="victory-subtitle">Trial Complete</p>
-        <div class="victory-message" id="victory-message">
-          <!-- typed line by line -->
-        </div>
-        <div class="victory-time-row">
-          Completed in <span id="final-time" class="time-highlight">--:--</span>
-        </div>
-        <div class="er-badge-row victory-badges">
-          <span class="er-badge">🌸 Forest Keeper</span>
-          <span class="er-badge">⚔️ Trial Victor</span>
-          <span class="er-badge">👑 Birthday Queen</span>
-        </div>
-        <button class="cta-btn wisteria-btn" id="victory-next-btn"
-          style="opacity:0;pointer-events:none"
-          onclick="goToMilestone4()">
-          Continue the Journey 🔍
-        </button>
-      </div>
-    </section>
-
-    <!-- ===== SCREEN 11: HIDDEN BUTTON INTRO ===== -->
-    <section id="hb-intro-screen" class="screen">
-      <div class="card" id="hb-intro-card">
-        <div class="hb-intro-icon">🔍</div>
-        <h2 class="hb-intro-title">Hidden Button Challenge</h2>
-        <p class="hb-intro-sub">Someone hid 5 secret buttons all over the screen.<br/>Can you find them all? 👀</p>
-        <ul class="hb-rules">
-          <li>🖱️ Click anywhere on the screen to hunt</li>
-          <li>⏳ You have <strong>60 seconds</strong></li>
-          <li>🎯 Find all 5 hidden buttons to win</li>
-          <li>🤫 They're sneaky. Just like... well, you'll find out 😏</li>
-        </ul>
-        <button class="cta-btn" onclick="startHiddenButtons()">Start Hunting 🕵️</button>
-      </div>
-    </section>
-
-    <!-- ===== SCREEN 12: HIDDEN BUTTON PLAY ===== -->
-    <section id="hb-play-screen" class="screen">
-      <!-- HUD bar at top -->
-      <div class="hb-hud" id="hb-hud">
-        <div class="hb-hud-item">
-          <span class="hud-label">Found</span>
-          <span class="hud-value" id="hb-found-count">0 / 5</span>
-        </div>
-        <div class="hb-hud-item center">
-          <span class="hud-label">⏱️ Time</span>
-          <span class="hud-value" id="hb-timer-display">60</span>
-        </div>
-        <div class="hb-hud-item right">
-          <span class="hud-label">Score</span>
-          <span class="hud-value" id="hb-score-display">0</span>
         </div>
       </div>
-
-      <!-- Clue ribbon -->
-      <div class="hb-clue-ribbon" id="hb-clue-ribbon">
-        🕵️ Psst... look everywhere. Corners, edges, the middle... 👀
-      </div>
-
-      <!-- Hidden buttons injected here by JS -->
-      <!-- Found flash overlay -->
-      <div class="hb-found-flash" id="hb-found-flash"></div>
-    </section>
-
-    <!-- ===== SCREEN 13: HIDDEN BUTTON SUCCESS ===== -->
-    <section id="hb-success-screen" class="screen">
-      <div class="card" id="hb-success-card">
-        <div class="hb-success-icon" id="hb-success-icon">🎉</div>
-        <h2 class="hb-success-title" id="hb-success-title">All Found!</h2>
-        <p class="hb-success-score">Score: <span id="hb-final-score" class="score-hl">0</span></p>
-        <p class="hb-success-time">Time left: <span id="hb-time-left" class="score-hl">--</span>s</p>
-        <p class="hb-success-msg" id="hb-success-msg">You found them all! Sneha has eagle eyes. 🦅</p>
-        <div class="hb-trophy-row" id="hb-trophy-row"></div>
-        <button class="cta-btn" onclick="goToMilestone5()">Next: Memory Wall 📸</button>
-      </div>
-    </section>
-
-    <!-- ===== SCREEN 14: HIDDEN BUTTON TIMEOUT ===== -->
-    <section id="hb-timeout-screen" class="screen">
-      <div class="card" id="hb-timeout-card">
-        <div class="hb-timeout-icon">⌛</div>
-        <h2 class="hb-timeout-title">Time's Up!</h2>
-        <p class="hb-timeout-found">You found <span id="hb-timeout-found" class="score-hl">0</span> / 5 buttons</p>
-        <p class="hb-timeout-msg">Sneha... Prasad hid them in plain sight too. 😂<br/>Don't worry, you still get to continue! 💜</p>
-        <button class="cta-btn" onclick="retryHiddenButtons()">Try Again 🔄</button>
-        <button class="cta-btn-ghost" onclick="goToMilestone5()">Skip → Memory Wall 📸</button>
-      </div>
-    </section>
+    </div>
 
     <!-- ===== SCREEN 15: MEMORY WALL INTRO ===== -->
     <section id="mw-intro-screen" class="screen">
@@ -347,12 +283,12 @@
         <div class="mw-intro-icon">📸</div>
         <h2 class="mw-intro-title">Memory Wall</h2>
         <p class="mw-intro-sub">
-          5 chapters of a friendship that changed everything.<br/>
+          9 chapters of a friendship that changed everything.<br/>
           Flip each card to relive the story. 🥹
         </p>
         <div class="mw-intro-stats">
           <div class="mw-stat">
-            <span class="mw-stat-num">8</span>
+            <span class="mw-stat-num">9</span>
             <span class="mw-stat-label">Chapters</span>
           </div>
           <div class="mw-stat-divider"></div>
@@ -485,7 +421,7 @@
           <div class="final-card" id="final-card">
             <div class="final-card-glow"></div>
             <div class="final-top-emoji">🥂</div>
-            <h2 class="final-card-title">You made it through all 7 missions!</h2>
+            <h2 class="final-card-title">You made it through every mission!</h2>
             <p class="final-card-sub">
               From the identity scan to this very moment —<br/>
               every single step was made just for <span class="name-highlight">you</span>.
