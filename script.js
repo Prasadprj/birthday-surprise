@@ -1387,10 +1387,7 @@ function openLetter(friend) {
       envState.opened.add(friend.id);
       markEnvelopeOpened(friend.id);
       updateStarBar();
-
-      if (envState.opened.size === FRIENDS.length) {
-        setTimeout(() => onAllLettersOpened(), 600);
-      }
+      // Don't trigger banner immediately — let user read the letter first
     }
   });
 }
@@ -1558,6 +1555,10 @@ window.closeLetter = function () {
       if (friend && friend.isBlack) {
         setTimeout(() => goToMilestone5(), 150);
       }
+      // Check if all friend letters are opened — trigger banner after modal closes
+      else if (envState.opened.size === FRIENDS.length && !envState.allFriendsDone) {
+        setTimeout(() => onAllLettersOpened(), 800);
+      }
     },
   });
 };
@@ -1696,6 +1697,7 @@ const MEMORIES = [
 const mwState = {
   flipped:     new Set(),
   modalOpen:   false,
+  celebrationShown: false,
 };
 
 // ── START MEMORY WALL ──────────────────────────────────────
@@ -1703,6 +1705,7 @@ window.startMemoryWall = function () {
   sfx_openWall();
   mwState.flipped.clear();
   mwState.modalOpen = false;
+  mwState.celebrationShown = false;
 
   // Switch screen
   screens.mwIntro.classList.remove("active");
@@ -1795,10 +1798,7 @@ function handleCardClick(wrap, mem) {
       scalar: 0.7,
     });
 
-    // Check all flipped
-    if (mwState.flipped.size === MEMORIES.length) {
-      setTimeout(() => onAllCardsFlipped(), 400);
-    }
+    // Don't trigger celebration immediately — let user read the card first
   }
 
   // Open modal on back-click (already flipped)
@@ -1868,6 +1868,12 @@ window.closeMemoryModal = function () {
   const overlay = document.getElementById("mw-modal-overlay");
   overlay.classList.remove("open");
   mwState.modalOpen = false;
+
+  // Check if all cards are flipped — trigger celebration after user closes modal
+  if (mwState.flipped.size === MEMORIES.length && !mwState.celebrationShown) {
+    mwState.celebrationShown = true;
+    setTimeout(() => onAllCardsFlipped(), 800); // Give 800ms after modal closes
+  }
 };
 
 // Close modal on Escape key
