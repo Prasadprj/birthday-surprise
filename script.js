@@ -17,6 +17,45 @@ const CONFIG = {
   floaterEmojis: ["🎂", "✨", "💫", "🎉", "💕", "🌸", "⭐", "🎈", "💜", "🦋"],
 };
 
+// ── GLOBAL BACKGROUND MUSIC ────────────────────
+let globalMusicPlaying = false;
+const globalMusic = document.getElementById("global-background-music");
+const globalMusicBtn = document.getElementById("global-music-toggle");
+
+// Try to start music after first user interaction
+function tryStartGlobalMusic() {
+  if (globalMusic && !globalMusicPlaying) {
+    globalMusic.volume = 0.35; // Set volume to 35%
+    globalMusic.play()
+      .then(() => {
+        globalMusicPlaying = true;
+        if (globalMusicBtn) globalMusicBtn.classList.remove("muted");
+      })
+      .catch(() => {
+        // Autoplay blocked — user must click the toggle button
+      });
+  }
+}
+
+// Toggle music on/off
+window.toggleGlobalMusic = function() {
+  if (!globalMusic) return;
+
+  if (globalMusicPlaying) {
+    globalMusic.pause();
+    globalMusicPlaying = false;
+    if (globalMusicBtn) globalMusicBtn.classList.add("muted");
+  } else {
+    globalMusic.volume = 0.35;
+    globalMusic.play()
+      .then(() => {
+        globalMusicPlaying = true;
+        if (globalMusicBtn) globalMusicBtn.classList.remove("muted");
+      })
+      .catch(() => {});
+  }
+};
+
 // ── STARFIELD ──────────────────────────────────
 (function initStarfield() {
   const canvas = document.getElementById("starfield");
@@ -168,11 +207,13 @@ function animateWelcomeEntrance() {
     .from(".typed-container", { opacity: 0, duration: 0.4 }, "-=0.1")
     .from("#start-btn",       { opacity: 0, y: 15, scale: 0.8, duration: 0.5, ease: "back.out(2)" }, "+=0.2")
     .from(".credit-text",     { opacity: 0, duration: 0.4 }, "-=0.1")
-    .call(initTyped); // start typing only after animation
+    .call(initTyped) // start typing only after animation
+    .call(tryStartGlobalMusic, null, "+=0.8"); // try to start music after welcome animation
 }
 
 // ── BUTTON: Start Mission ──────────────────────
 window.goToVerification = function () {
+  tryStartGlobalMusic(); // Ensure music starts on user interaction
   sfx_startMission();
   gsap.to("#start-btn", {
     scale: 0.9,
