@@ -1334,6 +1334,7 @@ function buildEnvelopeGarden() {
   FRIENDS.forEach((friend) => {
     const item = document.createElement("span");
     item.className = "env-star-item";
+    item.dataset.id = friend.id;
     item.innerHTML = `<span class="env-star-emoji" style="filter:grayscale(1) brightness(0.4)">☆</span><span class="env-star-name">${friend.name}</span>`;
     starBar.appendChild(item);
     // Animate in
@@ -1403,17 +1404,16 @@ function markEnvelopeOpened(id) {
 
 // ── UPDATE STAR BAR ───────────────────────────────────────
 function updateStarBar() {
-  const items = document.querySelectorAll(".env-star-item");
-  items.forEach((item, i) => {
-    if (i < envState.opened.size) {
-      const starEl = item.querySelector(".env-star-emoji");
-      if (starEl) {
-        starEl.textContent = "★";
-        starEl.style.filter = "drop-shadow(0 0 8px rgba(250,204,21,0.9))";
-        starEl.style.color  = "#facc15";
-      }
-      gsap.fromTo(item, { scale: 0.5 }, { scale: 1, duration: 0.4, ease: "back.out(2)" });
+  envState.opened.forEach((id) => {
+    const item = document.querySelector(`.env-star-item[data-id="${id}"]`);
+    if (!item) return;
+    const starEl = item.querySelector(".env-star-emoji");
+    if (starEl) {
+      starEl.textContent = "★";
+      starEl.style.filter = "drop-shadow(0 0 8px rgba(250,204,21,0.9))";
+      starEl.style.color  = "#facc15";
     }
+    gsap.fromTo(item, { scale: 0.5 }, { scale: 1, duration: 0.4, ease: "back.out(2)" });
   });
 }
 
@@ -1635,7 +1635,7 @@ const MEMORIES = [
     id: 4,
     emoji: "🌊",
     caption: "Chapter 4",
-    imageUrl: "images/WhatsApp Image 2026-08-11 at 8.58.40 AM (1).jpeg",
+    imageUrl: "images/IMG_1790.JPG.jpeg",
     title: "Vitamin Sea",
     date: "A day by the sea",
     story: "What started as an unexpected plan turned into one of the most memorable days. Between endless laughter, heartfelt conversations, and sharing pieces of our lives with each other, the sea quietly became a witness to a friendship growing stronger. Some places become special not because of where they are, but because of who you're with.",
@@ -1645,7 +1645,7 @@ const MEMORIES = [
     id: 5,
     emoji: "☕",
     caption: "Chapter 5",
-    imageUrl: "images/WhatsApp Image 2026-08-11 at 8.58.40 AM (2).jpeg",
+    imageUrl: "images/IMG_1791.JPG.jpeg",
     title: "Chai, Coffee & Endless Talks",
     date: "Every ordinary evening",
     story: "Some of our best memories weren't made on big trips — they were created over a cup of coffee or chai. Hours would pass without us noticing as we shared stories, laughed over the silliest things, discussed life, dreams, and everything in between. Those conversations turned ordinary evenings into unforgettable moments.",
@@ -1655,7 +1655,7 @@ const MEMORIES = [
     id: 6,
     emoji: "🎵",
     caption: "Chapter 6",
-    imageUrl: "images/WhatsApp Image 2026-08-11 at 8.58.40 AM.jpeg",
+    imageUrl: "images/IMG_1792.JPG.jpeg",
     title: "The Spotify Sessions",
     date: "Whenever boredom struck",
     story: "Some of the best moments didn't need a destination — just a good playlist. Whenever boredom struck, one of us would hit play on Spotify, and suddenly an ordinary day became a mini concert. Sometimes it was singing along at the top of our lungs, and other times it was sending just one line of a song over chat, waiting for the other person to complete the next line. Those little musical moments became our own inside language, turning simple conversations into memories worth smiling about.",
