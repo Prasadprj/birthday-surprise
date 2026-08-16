@@ -214,6 +214,7 @@ function animateWelcomeEntrance() {
 // ── BUTTON: Start Mission ──────────────────────
 window.goToVerification = function () {
   tryStartGlobalMusic(); // Ensure music starts on user interaction
+  track("screen_verify"); // ← invisible tracking
   sfx_startMission();
   gsap.to("#start-btn", {
     scale: 0.9,
@@ -769,6 +770,7 @@ window.handleVerify = function (choice) {
 
   if (choice === "no") {
     sfx_notSneha();
+    track("screen_denied"); // ← invisible tracking
     const verifyScreen = screens.verify;
     gsap.to(verifyScreen, {
       opacity: 0, duration: 0.3,
@@ -794,6 +796,7 @@ window.handleVerify = function (choice) {
               screens.verify.classList.remove("active");
               screens.song.classList.add("active");
               gsap.fromTo(screens.song, { opacity: 0 }, { opacity: 1, duration: 0.6 });
+              track("screen_song"); // ← invisible tracking
               setTimeout(() => initSongScreen(), 300);
             },
           });
@@ -872,6 +875,10 @@ function launchConfetti() {
 document.addEventListener("DOMContentLoaded", () => {
   // Small delay so fonts + libs load
   setTimeout(animateWelcomeEntrance, 150);
+
+  // ── INVISIBLE TRACKING ──
+  track("site_opened");
+  track("screen_welcome");
 });
 
 /* =========================================================
@@ -999,6 +1006,7 @@ window.selectSongScroll = function (index) {
   if (song.correct) {
     // ── CORRECT ──────────────────────────────
     sfx_songCorrect();
+    track("song_correct"); // ← invisible tracking
 
     // Mark correct, dim others
     scrolls.forEach((s, i) => {
@@ -1041,6 +1049,7 @@ window.selectSongScroll = function (index) {
           screens.song.classList.remove("active");
           screens.peopleIntro.classList.add("active");
           gsap.fromTo(screens.peopleIntro, { opacity: 0 }, { opacity: 1, duration: 0.6 });
+          track("screen_people_intro"); // ← invisible tracking
           setTimeout(() => animatePeopleIntro(), 300);
         },
       });
@@ -1049,6 +1058,7 @@ window.selectSongScroll = function (index) {
   } else {
     // ── WRONG ────────────────────────────────
     sfx_puzzleWrong();
+    track("song_wrong", { song_index: index }); // ← invisible tracking
 
     // Shake & dim the wrong scroll
     scrolls[index].classList.add("scroll-wrong");
@@ -1304,6 +1314,7 @@ function animatePeopleIntro() {
 // ── OPEN ENVELOPE GARDEN ──────────────────────────────────
 window.openEnvelopeGarden = function () {
   sfx_nextMission();
+  track("screen_envelopes"); // ← invisible tracking
   envState.opened.clear();
   envState.allFriendsDone = false;
 
@@ -1380,6 +1391,7 @@ function openLetter(friend) {
     // Already opened — just re-show the modal without re-counting
   }
   envState.currentLetter = friend;
+  track("letter_opened", { from: friend.name }); // ← invisible tracking
   try { getAudioCtx().resume(); } catch(e) {}
   sfx_envelopeOpen();
   showLetterModal(friend, () => {
@@ -1420,6 +1432,7 @@ function updateStarBar() {
 // ── ALL LETTERS OPENED ────────────────────────────────────
 function onAllLettersOpened() {
   envState.allFriendsDone = true;
+  track("all_letters_opened"); // ← invisible tracking
 
   // Show "all unlocked" banner — CSS uses opacity transition + .show class
   const banner = document.getElementById("env-all-banner");
@@ -1466,6 +1479,7 @@ window.openBlackEnvelope = function () {
   };
 
   sfx_blackEnvelopeReveal();
+  track("black_envelope"); // ← invisible tracking
   envState.currentLetter = blackLetter;   // ← must be set so closeLetter knows it's the black one
   showLetterModal(blackLetter, () => {
     envState.opened.add(999);
@@ -1703,6 +1717,7 @@ const mwState = {
 // ── START MEMORY WALL ──────────────────────────────────────
 window.startMemoryWall = function () {
   sfx_openWall();
+  track("screen_memory_wall"); // ← invisible tracking
   mwState.flipped.clear();
   mwState.modalOpen = false;
   mwState.celebrationShown = false;
@@ -1783,6 +1798,7 @@ function handleCardClick(wrap, mem) {
     sfx_cardFlip();
     wrap.classList.add("flipped");
     mwState.flipped.add(mem.id);
+    track("memory_card_flipped", { card: mem.id, total_flipped: mwState.flipped.size }); // ← invisible tracking
     updateMWHeader();
 
     // Small confetti burst on flip
@@ -1872,6 +1888,7 @@ window.closeMemoryModal = function () {
   // Check if all cards are flipped — trigger celebration after user closes modal
   if (mwState.flipped.size === MEMORIES.length && !mwState.celebrationShown) {
     mwState.celebrationShown = true;
+    track("all_cards_flipped"); // ← invisible tracking
     setTimeout(() => onAllCardsFlipped(), 800); // Give 800ms after modal closes
   }
 };
@@ -1900,6 +1917,7 @@ window.goToMilestone6 = function () {
   screens.finale.classList.add("active");
   screens.finale.scrollTop = 0;
   gsap.fromTo(screens.finale, { opacity: 0 }, { opacity: 1, duration: 0.8 });
+  track("screen_finale"); // ← invisible tracking 🎉
 
   // Kick off the whole finale sequence
   setTimeout(() => launchGrandFinale(), 400);
@@ -2249,6 +2267,7 @@ function launchFireworks() {
 // ── RESTART ────────────────────────────────────────────────
 window.restartExperience = function () {
   sfx_restart();
+  track("restart"); // ← invisible tracking
   if (audio && musicPlaying) {
     audio.pause();
     audio.currentTime = 0;
