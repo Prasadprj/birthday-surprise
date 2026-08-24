@@ -888,13 +888,13 @@ const SONGS = [
   },
   {
     text:    "abhi na jao chhod kar",
-    correct: false,
-    wrongMsg: "🎵 A beautiful farewell... but not the one the forest remembers.",
+    correct: true,
+    wrongMsg: null,
   },
   {
     text:    "itna na mujhse pyar badha",
     correct: false,
-    wrongMsg: "🌸 So tender... but the melody fades. Try again.",
+    wrongMsg: "🌸 So tender... but this isn't one of them. Try again.",
   },
   {
     text:    "bahon mein chale aao",
@@ -991,68 +991,87 @@ function spawnSongNotes() {
 }
 
 // ── SELECT SONG SCROLL ──
+// Track which correct songs have been picked
+const songState = { selected: new Set() };
+
 window.selectSongScroll = function (index) {
   const scrolls = document.querySelectorAll(".song-scroll");
   const song    = SONGS[index];
   const fb      = document.getElementById("song-feedback");
 
+  // Already selected — ignore
+  if (songState.selected.has(index)) return;
+
   sfx_scrollPick();
 
   if (song.correct) {
-    // ── CORRECT ──────────────────────────────
+    // ── CORRECT PICK ──────────────────────────────
     sfx_songCorrect();
+    songState.selected.add(index);
 
-    // Mark correct, dim others
-    scrolls.forEach((s, i) => {
-      if (i === index) s.classList.add("scroll-correct");
-      else             s.classList.add("scroll-dimmed");
-      s.style.pointerEvents = "none";
-    });
+    // Highlight this correct scroll
+    scrolls[index].classList.add("scroll-correct");
+    scrolls[index].style.pointerEvents = "none";
 
-    // Feedback
-    fb.textContent = "🌟 The forest remembers this song... it knows you.";
-    fb.className   = "song-feedback show right-msg";
+    if (songState.selected.size === 1) {
+      // First correct pick — prompt for second
+      fb.textContent = "✨ Yes! That's one of them... find the other song too.";
+      fb.className   = "song-feedback show right-msg";
 
-    // Music box burst icon
-    const icon = document.getElementById("song-box-icon");
-    gsap.to(icon, { scale: 1.6, duration: 0.3, ease: "back.out(2)",
-      onComplete: () => gsap.to(icon, { scale: 1, duration: 0.4 }) });
+      const icon = document.getElementById("song-box-icon");
+      gsap.to(icon, { scale: 1.4, duration: 0.3, ease: "back.out(2)",
+        onComplete: () => gsap.to(icon, { scale: 1, duration: 0.4 }) });
 
-    // Golden burst overlay
-    const burst = document.createElement("div");
-    burst.className = "song-correct-burst";
-    document.body.appendChild(burst);
-    setTimeout(() => burst.remove(), 1100);
+    } else {
+      // Both correct songs picked — proceed!
+      fb.textContent = "🌟 The forest remembers both songs... it truly knows you.";
+      fb.className   = "song-feedback show right-msg";
 
-    // Confetti
-    setTimeout(() => {
-      confetti({
-        particleCount: 120,
-        spread: 90,
-        origin: { y: 0.5 },
-        colors: ["#facc15","#c084fc","#f472b6","#fff","#86efac"],
-        scalar: 1.1,
+      // Dim the wrong scrolls
+      scrolls.forEach((s, i) => {
+        if (!songState.selected.has(i)) s.classList.add("scroll-dimmed");
+        s.style.pointerEvents = "none";
       });
-    }, 400);
 
-    // Transition to People Intro
-    setTimeout(() => {
-      gsap.to(screens.song, {
-        opacity: 0, duration: 0.7,
-        onComplete: () => {
-          screens.song.classList.remove("active");
-          screens.peopleIntro.classList.add("active");
-          gsap.fromTo(screens.peopleIntro, { opacity: 0 }, { opacity: 1, duration: 0.6 });
-          setTimeout(() => animatePeopleIntro(), 300);
-        },
-      });
-    }, 2600);
+      const icon = document.getElementById("song-box-icon");
+      gsap.to(icon, { scale: 1.6, duration: 0.3, ease: "back.out(2)",
+        onComplete: () => gsap.to(icon, { scale: 1, duration: 0.4 }) });
+
+      // Golden burst overlay
+      const burst = document.createElement("div");
+      burst.className = "song-correct-burst";
+      document.body.appendChild(burst);
+      setTimeout(() => burst.remove(), 1100);
+
+      // Confetti
+      setTimeout(() => {
+        confetti({
+          particleCount: 120,
+          spread: 90,
+          origin: { y: 0.5 },
+          colors: ["#facc15","#c084fc","#f472b6","#fff","#86efac"],
+          scalar: 1.1,
+        });
+      }, 400);
+
+      // Transition to People Intro
+      setTimeout(() => {
+        gsap.to(screens.song, {
+          opacity: 0, duration: 0.7,
+          onComplete: () => {
+            screens.song.classList.remove("active");
+            screens.peopleIntro.classList.add("active");
+            gsap.fromTo(screens.peopleIntro, { opacity: 0 }, { opacity: 1, duration: 0.6 });
+            setTimeout(() => animatePeopleIntro(), 300);
+          },
+        });
+      }, 2600);
+    }
 
   } else {
     // ── WRONG ────────────────────────────────
     sfx_puzzleWrong();
 
-    // Shake & dim the wrong scroll
     scrolls[index].classList.add("scroll-wrong");
     fb.textContent = song.wrongMsg;
     fb.className   = "song-feedback show wrong-msg";
@@ -1125,6 +1144,26 @@ const FRIENDS = [
     imageEmoji: "🌼",
     message:    "Hi Snehaaa…\nHappiest birthday to my friend, who is the epitome of selflessness, if there is anything that anyone should adapt from you, then that would be selflessness. You taught me how to be caring and loving.\n\nThank you dost, have a blast birthday and have a wonderful life ahead.\n🎂🎂🎂🍰🥮🧁🧁",
     sign:       "— Teju 🌼",
+  },
+  {
+    id:         6,
+    name:       "Trupti",
+    emoji:      "🩷",
+    colour:     "#f0abfc",   // soft purple-pink
+    quote:      "\"You radiate warmth and love wherever you go.\"",
+    imageEmoji: "🩷",
+    message:    "Hello Snehaaaaaa,\n\nWish you a very happy birthday Sneha🩷🫶\n\nYou're one of the kindest women I've come across, you radiate warmth and love around you. Wishing for a really really successful, happy and healthy life full of joy 🫂",
+    sign:       "— Trupti 🩷",
+  },
+  {
+    id:         7,
+    name:       "Nikhat",
+    emoji:      "🌟",
+    colour:     "#86efac",   // soft green
+    quote:      "\"Keep shining, keep smiling, and always stay the beautiful person you are.\"",
+    imageEmoji: "🌟",
+    message:    "Happy Birthday, Sneha! 🎂💖✨ To the most beautiful soul, may your special day be filled with endless love, happiness, and beautiful moments. 🌸🥰\n\nMay you always be blessed with great health, success, peace, and everything your heart truly wishes for. 🙏💫\n\nWishing you a future filled with amazing opportunities, wonderful people, unforgettable memories, and dreams coming true. 🌟❤️\n\nMay every year bring you closer to the life you've always dreamed of and give you countless reasons to smile. 😊🌷\n\nKeep shining, keep smiling, and always stay the beautiful person you are! ✨🧿\n\nHappy Birthday once again, Sneha! 🎉🥳💐 May this year be your best one yet! ❤️",
+    sign:       "— Nikhat 🌟",
   },
 ];
 
@@ -1343,13 +1382,15 @@ function buildEnvelopeGarden() {
     gsap.fromTo(item, { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.4, delay: 0.1 });
   });
 
-  // Envelopes positioned in a 3-top / 2-bottom grid layout
+  // Envelopes positioned in a 3-top / 2-middle / 2-bottom grid layout
   const positions = [
-    { left: "25%",  top: "35%" },
-    { left: "50%",  top: "35%" },
-    { left: "75%",  top: "35%" },
-    { left: "35%",  top: "65%" },
-    { left: "65%",  top: "65%" },
+    { left: "25%",  top: "28%" },
+    { left: "50%",  top: "28%" },
+    { left: "75%",  top: "28%" },
+    { left: "25%",  top: "55%" },
+    { left: "50%",  top: "55%" },
+    { left: "75%",  top: "55%" },
+    { left: "50%",  top: "80%" },
   ];
 
   FRIENDS.forEach((friend, i) => {
@@ -1450,7 +1491,7 @@ function onAllLettersOpened() {
       { opacity: 1, scale: 1, duration: 0.8, ease: "back.out(2)" }
     );
     sfx_blackEnvelopeReveal();
-  }, 2200);
+  }, 4200);
 }
 
 // ── OPEN BLACK ENVELOPE ───────────────────────────────────
@@ -1667,7 +1708,7 @@ const MEMORIES = [
     id: 7,
     emoji: "🌊",
     caption: "Chapter 7",
-    imageUrl: "images/WhatsApp Image 2026-08-11 at 9.02.32 AM (1).jpeg",
+    imageUrl: "images/IMG_1785.JPG.jpeg",
     title: "The Konkan Chronicles 🌊",
     date: "Konkan Trip",
     story: "It started from the office with endless songs, terrible singing, and a journey that somehow felt way too short. From visiting temples and chasing waterfalls to enjoying sunsets while singing retro songs, dancing, and making countless beach reels — Konkan gave us another bunch of memories we'll always smile about. 🌊❤️",
@@ -1687,7 +1728,7 @@ const MEMORIES = [
     id: 9,
     emoji: "🌸",
     caption: "Chapter 9",
-    imageUrl: "images/IMG_1785.JPG.jpeg",
+    imageUrl: "",
     title: "To Be Continued...",
     date: "The chapters still unwritten",
     story: "This chapter doesn't have a photo yet... because our best memories are still waiting to happen. More adventures, more random plans, more late-night rides, more laughter, and many more birthdays together. This isn't the end of our story — it's just the beginning of many more beautiful chapters.",
